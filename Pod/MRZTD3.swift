@@ -18,6 +18,7 @@ open class MRZTD3: MRZParser {
     /// Do you want to see debug messages? Set to true (see init) to see what's going on.
     private var _debug = false
     
+    @objc public var finalPassportNumber: String = ""
     /// The document type from the 1st line of the MRZ. (start 1, len 1)
     @objc public var documentType: String = ""
     /// The document sub type from the 1st line of the MRZ. (start 2, len 1)
@@ -59,7 +60,8 @@ open class MRZTD3: MRZParser {
      :returns: Return all fields in a dictionary
      */
     @objc public override func data() -> Dictionary<String, Any> {
-        return ["documentType"    : documentType,
+        return ["finalPassportNumber"   : finalPassportNumber,
+                "documentType"    : documentType,
                 "documentSubType" : documentSubType,
                 "countryCode"     : countryCode,
                 "lastName"        : lastName,
@@ -142,7 +144,7 @@ open class MRZTD3: MRZParser {
         
         debugLog("Processing line 1 : \(line1)")
         debugLog("Processing line 2 : \(line2)")
-        
+            
         // Line 1 parsing
         documentType = line1.subString(0, to: 0)
         debugLog("Document type : \(documentType)")
@@ -160,6 +162,14 @@ open class MRZTD3: MRZParser {
         passportNumber = line2.subString(0, to: 1) + line2.subString(2, to: 8).toNumber()
         debugLog("passportNumber : \(passportNumber)")
         let passportNumberCheck = line2.subString(9, to: 9).toNumber()
+        
+        let temporaryPN = line2.subString(0, to: 19)
+        if temporaryPN.contains("<") {
+            finalPassportNumber = passportNumber + "<"
+        }else{
+            finalPassportNumber = passportNumber
+        }
+        
         nationality = line2.subString(10, to: 12).replace(target: "<", with: " ")
         debugLog("nationality : \(nationality)")
         let birth = line2.subString(13, to: 18).toNumber()
