@@ -20,6 +20,7 @@ open class MRZTD1: MRZParser {
     
     private var lineLen: Int = 30;
     
+    @objc public var finalPassportNumber: String = ""
     /// The document type from the 1st line of the MRZ. (start 1, len 1)
     @objc public var documentType: String = ""
     /// The document sub type from the 1st line of the MRZ. (start 2, len 1)
@@ -61,7 +62,8 @@ open class MRZTD1: MRZParser {
      :returns: Return all fields in a dictionary
      */
     @objc public override func data() -> Dictionary<String, Any> {
-        return ["documentType"    : documentType,
+        return ["finalPassportNumber"   : finalPassportNumber,
+                "documentType"    : documentType,
                 "documentSubType" : documentSubType,
                 "countryCode"     : countryCode,
                 "passportNumber"  : passportNumber,
@@ -163,7 +165,7 @@ open class MRZTD1: MRZParser {
         debugLog("Processing line 1 : \(line1)")
         debugLog("Processing line 2 : \(line2)")
         debugLog("Processing line 3 : \(line3)")
-
+        
         // Line 1 parsing
         documentType = line1.subString(0, to: 0)
         debugLog("Document type : \(documentType)")
@@ -174,7 +176,13 @@ open class MRZTD1: MRZParser {
         debugLog("passportNumber : \(passportNumber)")
         
         let passportNumberCheck = line1.subString(14, to: 14).toNumber()
-
+        
+        let temporaryPN = line3.subString(0, to: 19)
+        if temporaryPN.contains("<") {
+            finalPassportNumber = passportNumber + "<"
+        }else{
+            finalPassportNumber = passportNumber
+        }
         
         // Line 2 parsing
         let birth = line2.subString(0, to: 5).toNumber()
