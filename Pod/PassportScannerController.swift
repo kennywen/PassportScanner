@@ -242,7 +242,7 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate {
                                                           y:debugViewFrame.origin.y,
                                                           width:debugViewFrame.size.width,
                                                           height:debugViewFrame.size.height))
-                scanAreaDebug.backgroundColor = UIColor.red.withAlphaComponent(0.5)
+                scanAreaDebug.backgroundColor = UIColor.green.withAlphaComponent(0.5)
                 renderView.addSubview(scanAreaDebug)
             }
 
